@@ -1,3 +1,5 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%;display:block}button,input{font:inherit}</style></head><body>
 <title>남들과 다른 내 취향 · 여자 편</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,6 +40,7 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px }
 .ghost:disabled { opacity: .4; cursor: default }
 .preview { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px }
 .preview img, .face img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; background: var(--line) }
+[hidden] { display: none !important }
 .name { font: inherit; font-size: 17px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: inherit; width: 100% }
 .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px }
 .facts div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 2px }
@@ -315,3 +318,5 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'Backspace') undo();
 });
 </script>
+
+</body></html>
