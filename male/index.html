@@ -1,0 +1,317 @@
+<title>남들과 다른 내 취향 · 남자 편</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: one narrow column like a phone screen; the result prints as a photo-booth strip (인생네컷). */
+:root {
+  --paper: #eef0f5; --card: #ffffff; --ink: #14161b; --muted: #5a6070; --line: #d8dbe3;
+  --accent: #3343f5; --accent-ink: #ffffff; --strip: #121317; --strip-ink: #eef0f5; --tint: #e3e6ff;
+  --display: "Black Han Sans", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0f1115; --card: #181b21; --ink: #eceef3; --muted: #9aa0ae; --line: #2b2f38;
+  --accent: #7d88ff; --accent-ink: #0f1115; --strip: #eceef3; --strip-ink: #14161b; --tint: #232850; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #0f1115; --card: #181b21; --ink: #eceef3; --muted: #9aa0ae; --line: #2b2f38;
+  --accent: #7d88ff; --accent-ink: #0f1115; --strip: #eceef3; --strip-ink: #14161b; --tint: #232850; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--paper); color: var(--ink); font: 400 16px/1.6 var(--body); margin: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 40px }
+main { max-width: 560px; margin: 0 auto; display: grid; gap: 24px }
+h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; line-height: 1.15; text-wrap: balance }
+h1 { font-size: clamp(40px, 11vw, 60px); letter-spacing: -0.01em }
+h2 { font-size: 26px }
+p { margin: 0 }
+.muted { color: var(--muted) }
+.small { font-size: 13px }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .12em; color: var(--muted); text-transform: uppercase }
+.stamp { display: inline-grid; place-items: center; width: 1.25em; height: 1.25em; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: .62em; vertical-align: .18em; margin-left: .12em }
+button { font: inherit; cursor: pointer; border: 0; border-radius: 12px; color: inherit }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px }
+.primary { background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 18px; padding: 16px 20px; width: 100% }
+.ghost { background: transparent; border: 1px solid var(--line); padding: 10px 14px; font-size: 14px; color: var(--muted) }
+.ghost:hover { color: var(--ink); border-color: var(--muted) }
+.ghost:disabled { opacity: .4; cursor: default }
+.preview { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px }
+.preview img, .face img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; background: var(--line) }
+.name { font: inherit; font-size: 17px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: inherit; width: 100% }
+.facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px }
+.facts div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 2px }
+.facts b { font: 400 22px/1.1 var(--display) }
+.bar { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden }
+.bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s ease }
+.head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px }
+.count { font: 500 14px/1 var(--mono); font-variant-numeric: tabular-nums; color: var(--muted) }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+.face { padding: 0; background: var(--card); border: 2px solid var(--line); border-radius: 14px; overflow: hidden; transition: transform .15s ease, border-color .15s ease, opacity .2s ease }
+.face img { border-radius: 0 }
+.face span { display: block; padding: 8px 0; font: 500 12px/1 var(--mono); color: var(--muted); letter-spacing: .08em }
+.face:hover { border-color: var(--accent) }
+.face.picked { border-color: var(--accent); transform: scale(.97) }
+.pair.fading .face { opacity: .25 }
+.actions { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap }
+.result { display: grid; gap: 20px; justify-items: center }
+.strip { background: var(--strip); color: var(--strip-ink); padding: 14px 14px 12px; border-radius: 4px; width: min(100%, 340px); display: grid; gap: 10px }
+.strip .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px }
+.strip img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover }
+.strip .foot { display: flex; justify-content: space-between; font: 500 11px/1 var(--mono); letter-spacing: .1em }
+.strip .title { font: 400 20px/1 var(--display); text-align: center; letter-spacing: .04em }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 12px; width: 100% }
+.chips { display: flex; flex-wrap: wrap; gap: 8px }
+.chip { background: var(--tint); border-radius: 999px; padding: 6px 12px; font-weight: 500; font-size: 15px }
+.chip.no { background: transparent; border: 1px dashed var(--line); color: var(--muted) }
+.meter { display: flex; gap: 4px }
+.meter i { flex: 1; height: 8px; border-radius: 4px; background: var(--line) }
+.meter i.on { background: var(--accent) }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+</style>
+
+<style>
+.diffs { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none }
+.diffs li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; background: var(--tint); border-radius: 10px; padding: 10px 12px }
+.diffs li b { font-weight: 700 }
+.diffs li span { font: 500 12px/1 var(--mono); color: var(--muted); white-space: nowrap }
+.diffs li.lean { background: transparent; border: 1px dashed var(--line) }
+.mini { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px }
+.mini img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; background: var(--line) }
+.btns { display: grid; gap: 10px; width: 100% }
+.secondary { background: var(--card); border: 1px solid var(--accent); color: var(--accent); font-weight: 700; font-size: 16px; padding: 14px 20px; width: 100% }
+</style>
+
+<main>
+  <section id="start" style="display:grid;gap:22px">
+    <div style="display:grid;gap:10px">
+      <span class="eyebrow">남자 얼굴 편 · AI 가상 인물</span>
+      <h1>남들과 다른 내 취향<span class="stamp">30</span></h1>
+      <p>두 얼굴 중 더 끌리는 쪽을 30번 고르세요. 두 얼굴은 보통 사람들이 비슷하게 매력적이라고 보는 쌍이라, 고르는 순간 남들과 다른 내 취향이 드러나요. 결과는 "모두가 좋아하는 것"을 빼고, 나만의 차이만 보여드려요.</p>
+    </div>
+    <div class="preview" id="preview"></div>
+    <div class="facts">
+      <div><b>30번</b><span class="small muted">선택 (더 할 수 있어요)</span></div>
+      <div><b>약 2분</b><span class="small muted">소요 시간</span></div>
+      <div><b>연구용</b><span class="small muted">이름과 고른 기록이 저장돼요</span></div>
+    </div>
+    <input class="name" id="name" placeholder="이름 (연구팀이 누구 기록인지 알아보는 용도)" autocomplete="off" maxlength="40">
+    <button class="primary" id="go">시작하기</button>
+    <p class="small muted">여기 나오는 얼굴은 모두 AI(Google Gemini)가 만든 가상 인물이에요. 실제 사람이 아니에요. 키보드로는 ← → 로 고를 수 있어요.</p>
+  </section>
+
+  <section id="game" hidden style="display:grid;gap:16px">
+    <div class="head"><h2>더 끌리는 얼굴은?</h2><span class="count" id="count">1 / 30</span></div>
+    <div class="bar"><i id="fill"></i></div>
+    <div class="pair" id="pair">
+      <button class="face" id="L" aria-label="왼쪽 얼굴 선택"><img id="Li" alt="왼쪽 얼굴"><span>← 왼쪽</span></button>
+      <button class="face" id="R" aria-label="오른쪽 얼굴 선택"><img id="Ri" alt="오른쪽 얼굴"><span>오른쪽 →</span></button>
+    </div>
+    <div class="actions">
+      <button class="ghost" id="undo" disabled>이전으로</button>
+      <button class="ghost" id="skip">둘 다 비슷해요</button>
+    </div>
+  </section>
+
+  <section id="result" hidden class="result">
+    <div class="strip" id="strip">
+      <div class="title">MY TYPE</div>
+      <div class="grid" id="top"></div>
+      <div class="foot"><span id="date"></span><span>남들과 다른 내 취향 · 남자</span></div>
+    </div>
+    <p class="small muted" style="text-align:center">보통 사람들은 평범하게 보지만, 나에게는 높게 나온 얼굴들이에요.</p>
+    <div class="panel">
+      <span class="eyebrow">남들과 다른 점</span>
+      <ul class="diffs" id="diffs"></ul>
+      <p class="small" id="verdict"></p>
+      <span class="eyebrow">이 차이가 진짜라는 확신</span>
+      <div class="meter" id="meter"><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div class="panel">
+      <span class="eyebrow">모두가 좋아하는 얼굴 (참고용, 내 취향 아님)</span>
+      <div class="mini" id="crowd"></div>
+      <p class="small" id="agree"></p>
+      <p class="small muted">"모두"는 지금은 공개 얼굴 평가 데이터의 평가자들이에요. 스타일 이름은 AI가 사진에서 읽은 인상이라 틀릴 수 있어요.</p>
+    </div>
+    <div class="btns">
+      <button class="secondary" id="more">20번 더 해서 더 정확하게</button>
+      <button class="primary" id="again">처음부터 다시 하기</button>
+      <button class="ghost" id="copy">연구용 기록 복사</button>
+      <textarea id="record" hidden readonly rows="4" style="width:100%;font-size:12px"></textarea>
+      <p class="small muted" id="copied"></p>
+    </div>
+  </section>
+</main>
+
+<script>
+// Route B (PRD 0002). A face's appeal to this player = shared taste (what people in general like, D.faces[i].h)
+// + a personal part g(face)·v, where g = the 10 named traits and v is this player's weight on each.
+// v starts at 0 (= the average player) and moves only as far as their picks push it (Bayesian logistic
+// regression, Laplace approximation). The result reports v: how this player departs from the average.
+const D = {"gender":"male","label":"남자","faces":[{"f":"faces/000.webp","id":"male/0167","x":[-0.834,-0.975,-0.764,0.785,0.325,-1.613,1.93,-1.702,1.908,-0.581],"t":[-0.21,-0.51,0.48,0.98,0.76,-0.94,0.91,-0.08,-0.69,2.0],"h":3.504},{"f":"faces/001.webp","id":"male/0186","x":[1.3,0.362,-1.223,-0.36,-0.398,0.269,-1.19,0.731,-0.152,-1.191],"t":[1.15,-0.3,0.78,0.21,0.67,1.99,-0.17,1.48,1.05,-0.8],"h":2.574},{"f":"faces/002.webp","id":"male/0151","x":[-0.173,1.625,-1.161,-0.569,0.044,-1.135,-0.092,-1.123,-1.292,0.252],"t":[1.24,0.76,-0.53,0.08,0.95,0.42,0.92,1.36,0.24,-0.39],"h":3.037},{"f":"faces/003.webp","id":"male/0190","x":[-1.779,0.165,1.082,2.823,0.103,0.555,0.113,1.099,-0.363,0.904],"t":[-3.64,0.21,-1.89,-0.39,-2.08,-0.86,-0.98,-3.38,-1.21,0.22],"h":3.619},{"f":"faces/004.webp","id":"male/0010","x":[-2.137,-1.218,0.598,-1.962,-1.189,-0.087,0.437,-1.271,0.687,0.032],"t":[0.62,2.1,-0.04,0.05,0.23,0.3,0.38,-0.22,-1.4,2.9],"h":3.749},{"f":"faces/005.webp","id":"male/0009","x":[0.121,1.424,-0.993,0.206,1.432,-2.745,0.673,-0.088,-0.279,0.255],"t":[1.56,-1.68,-0.19,0.05,1.24,1.26,-0.86,1.42,-0.76,-0.34],"h":2.995},{"f":"faces/006.webp","id":"male/0145","x":[0.973,0.013,1.151,-0.06,-0.938,-0.799,-0.2,0.528,1.503,0.143],"t":[0.55,0.21,-0.86,0.52,0.13,-1.11,-0.79,0.36,-0.59,-0.2],"h":3.328},{"f":"faces/007.webp","id":"male/0008","x":[-0.323,2.628,1.441,1.353,-0.878,-0.758,0.269,-0.032,0.567,-0.315],"t":[-0.82,-1.1,-1.47,-1.94,-2.22,0.23,0.47,-1.19,-1.34,-2.0],"h":2.794},{"f":"faces/008.webp","id":"male/0049","x":[-0.479,-0.349,0.581,-1.02,1.294,0.065,1.107,0.618,-1.607,-0.886],"t":[0.8,-0.66,0.16,-0.45,0.15,0.29,0.19,0.09,-0.69,-0.31],"h":3.048},{"f":"faces/009.webp","id":"male/0041","x":[-0.312,1.257,-0.239,0.455,0.94,-0.161,1.444,-1.168,-0.744,-1.225],"t":[-0.43,-1.07,-1.34,-1.47,-1.08,0.76,-1.56,0.02,0.7,-0.94],"h":3.295},{"f":"faces/010.webp","id":"male/0134","x":[0.667,0.297,-0.064,-1.051,-2.389,-1.37,0.8,1.334,-0.863,0.726],"t":[1.48,1.08,0.57,0.6,0.3,-0.33,2.47,-0.02,-0.06,-0.51],"h":3.061},{"f":"faces/011.webp","id":"male/0002","x":[-0.386,1.619,-0.645,0.628,0.382,1.404,-0.86,2.028,-0.558,0.269],"t":[-1.95,-0.15,0.81,-0.54,-1.12,2.03,-0.44,-1.56,-0.84,-0.8],"h":2.982},{"f":"faces/012.webp","id":"male/0153","x":[-0.513,1.614,0.565,-1.142,-0.11,-0.004,-0.146,0.296,-0.354,-1.746],"t":[1.03,0.56,0.62,-0.54,0.28,0.93,-1.27,0.3,-0.79,0.87],"h":3.08},{"f":"faces/013.webp","id":"male/0124","x":[0.184,-0.399,-0.218,-0.386,0.707,0.339,-1.003,-0.08,1.034,-0.32],"t":[-0.13,-0.47,-0.21,0.33,-0.26,0.35,0.64,0.26,0.28,0.59],"h":3.379},{"f":"faces/014.webp","id":"male/0000","x":[-0.518,-0.531,-0.736,0.714,0.601,0.422,0.135,-1.113,0.121,-1.114],"t":[-0.51,0.46,0.07,0.81,0.98,0.15,-0.39,0.25,0.55,1.08],"h":3.353},{"f":"faces/015.webp","id":"male/0192","x":[1.553,-1.869,1.467,-1.179,0.135,-1.057,1.13,0.493,-2.068,1.153],"t":[1.11,-0.49,1.81,1.05,1.19,-1.55,0.08,0.94,2.57,-0.25],"h":3.236},{"f":"faces/016.webp","id":"male/0129","x":[1.234,-1.029,1.085,-0.701,1.077,0.728,-0.757,-0.884,-0.04,1.33],"t":[0.25,-1.0,0.65,0.0,0.45,-1.46,-0.54,0.76,1.52,0.02],"h":3.123},{"f":"faces/017.webp","id":"male/0162","x":[-1.258,-1.982,-0.661,0.344,-0.863,-0.37,-1.897,-0.544,-3.303,-0.626],"t":[-0.01,1.41,0.98,1.64,1.66,-0.71,1.04,-0.48,-0.0,2.25],"h":3.1},{"f":"faces/018.webp","id":"male/0005","x":[0.593,-1.042,-0.697,-1.894,0.008,1.526,-0.577,-0.149,0.766,-0.82],"t":[0.27,0.47,0.29,0.53,0.01,0.53,0.4,0.31,0.65,0.46],"h":3.469},{"f":"faces/019.webp","id":"male/0196","x":[-0.836,-0.746,0.36,-1.264,-1.16,0.311,0.237,-1.0,1.123,0.433],"t":[0.75,1.87,-0.5,0.63,0.71,-1.23,1.33,0.44,-1.06,1.17],"h":3.488},{"f":"faces/020.webp","id":"male/0048","x":[-0.075,1.563,-0.288,0.057,-0.306,0.121,1.573,1.726,-1.052,1.802],"t":[-0.84,-0.71,0.21,-0.1,-1.67,0.51,1.95,-1.48,-0.88,-1.96],"h":3.345},{"f":"faces/021.webp","id":"male/0099","x":[0.876,-0.517,-1.11,-0.68,-1.054,0.349,0.172,1.601,0.342,0.702],"t":[0.44,1.11,2.82,1.86,-0.05,0.31,0.58,0.26,0.56,-0.14],"h":2.945},{"f":"faces/022.webp","id":"male/0033","x":[0.979,-0.68,0.051,0.81,1.002,1.231,-0.744,-0.339,-0.277,-1.72],"t":[-0.14,-0.79,-0.61,-0.66,0.06,-0.13,-0.76,0.03,1.13,-0.3],"h":3.146},{"f":"faces/023.webp","id":"male/0148","x":[-1.243,0.698,0.36,-0.935,2.139,0.113,-0.998,-0.561,-0.198,-0.162],"t":[-0.22,0.26,-1.51,-1.15,0.86,2.24,-0.57,0.55,-1.0,0.77],"h":3.696},{"f":"faces/024.webp","id":"male/0083","x":[-0.575,-0.458,0.607,0.035,2.114,0.75,-0.415,1.583,0.68,1.941],"t":[-2.02,-1.59,-0.53,-0.07,0.44,1.22,-1.23,-0.63,0.83,0.18],"h":3.679},{"f":"faces/025.webp","id":"male/0082","x":[0.594,0.224,-1.751,-0.844,0.149,0.584,0.659,-1.936,-0.35,0.828],"t":[0.98,-0.24,0.33,0.42,0.8,1.04,1.07,1.7,0.89,-0.64],"h":3.085},{"f":"faces/026.webp","id":"male/0114","x":[0.998,-1.034,-0.933,0.581,0.608,-1.287,-0.061,0.161,0.306,0.026],"t":[0.33,-0.31,1.6,1.28,1.05,-0.18,0.01,0.68,1.69,0.16],"h":3.19},{"f":"faces/027.webp","id":"male/0102","x":[-1.529,-0.208,-0.35,-0.193,-0.441,1.725,1.551,0.666,1.013,-0.072],"t":[-1.71,0.45,-0.06,-0.21,-1.28,0.81,-1.0,-1.92,-0.76,0.33],"h":3.652},{"f":"faces/028.webp","id":"male/0016","x":[-0.587,-0.957,-0.025,-1.016,0.999,0.655,0.504,0.065,0.816,0.153],"t":[0.68,0.16,0.26,0.54,1.13,0.43,-0.12,0.79,0.3,1.26],"h":3.26},{"f":"faces/029.webp","id":"male/0018","x":[0.163,-1.466,0.628,2.141,0.273,0.144,-0.969,0.188,0.203,1.095],"t":[-1.94,-0.22,1.17,0.65,0.08,-1.64,-0.99,-1.21,1.2,1.03],"h":3.573},{"f":"faces/030.webp","id":"male/0154","x":[1.117,0.413,0.927,0.289,-1.862,-0.647,-0.966,0.711,1.395,-1.306],"t":[-0.4,1.25,1.12,0.92,-1.32,-0.06,0.57,-0.59,-0.35,-0.58],"h":2.836},{"f":"faces/031.webp","id":"male/0113","x":[-3.284,-1.452,-0.608,1.42,-0.064,-0.99,-1.102,0.341,-0.291,1.396],"t":[-0.96,0.88,0.47,1.45,1.09,-0.32,0.6,-1.32,-1.72,2.79],"h":3.886},{"f":"faces/032.webp","id":"male/0180","x":[0.785,1.762,-0.003,1.37,0.692,0.124,0.118,1.003,-0.914,-1.443],"t":[-0.91,-1.36,-0.68,-1.48,-1.55,1.65,-1.61,-1.08,0.47,-1.41],"h":2.889},{"f":"faces/033.webp","id":"male/0046","x":[0.418,-0.044,1.082,2.604,-0.345,1.567,-0.83,0.69,-1.057,1.363],"t":[-2.59,-0.53,0.27,-0.78,-1.76,-1.62,-1.7,-2.02,0.35,-0.7],"h":3.088},{"f":"faces/034.webp","id":"male/0089","x":[-0.533,0.173,-0.341,-1.443,0.634,1.054,-0.333,1.138,-1.809,-0.884],"t":[-0.2,1.27,1.66,0.08,-0.3,0.87,-0.81,-0.13,0.15,-0.27],"h":3.482},{"f":"faces/035.webp","id":"male/0040","x":[-1.451,1.295,0.47,1.074,0.254,-1.284,-1.366,1.088,-1.183,-0.339],"t":[-0.86,0.76,-0.52,-0.46,-0.41,1.12,-0.71,-1.34,-1.92,0.12],"h":3.156},{"f":"faces/036.webp","id":"male/0143","x":[-0.902,0.874,-1.694,-0.777,-0.229,-1.458,-0.083,1.615,-0.721,4.193],"t":[-0.05,-0.25,0.97,1.38,1.51,0.95,2.69,0.35,-1.17,0.23],"h":3.316},{"f":"faces/037.webp","id":"male/0127","x":[-0.833,0.102,0.543,-0.444,-1.387,0.452,0.851,-0.445,1.44,0.147],"t":[-0.76,1.65,-0.19,0.12,-0.86,0.27,1.15,-0.92,-1.28,0.71],"h":3.471},{"f":"faces/038.webp","id":"male/0142","x":[-0.892,0.329,-0.907,-0.732,1.308,0.071,-0.385,0.236,0.449,0.105],"t":[0.04,-0.36,0.78,0.59,-0.07,1.69,-1.46,0.11,-0.69,0.74],"h":3.549},{"f":"faces/039.webp","id":"male/0011","x":[-0.08,1.428,0.748,-1.718,1.497,-1.378,0.295,1.635,-0.838,-0.935],"t":[1.12,0.18,-0.05,-0.13,0.83,0.51,0.11,0.43,-0.48,-0.14],"h":3.526},{"f":"faces/040.webp","id":"male/0115","x":[0.652,1.645,-1.405,0.049,-0.223,0.707,0.382,-0.499,0.279,0.592],"t":[0.57,-0.88,-1.18,-0.86,-0.09,0.5,1.54,0.51,-0.1,-1.48],"h":2.833},{"f":"faces/041.webp","id":"male/0096","x":[-0.179,-0.735,-0.75,0.9,0.535,-0.693,1.269,-0.726,1.22,0.043],"t":[0.38,-0.77,0.64,0.05,0.68,-0.51,-1.05,0.73,-0.6,0.91],"h":3.328},{"f":"faces/042.webp","id":"male/0024","x":[1.173,-0.435,-0.45,0.532,0.475,0.026,0.706,-0.835,-0.069,-0.913],"t":[1.29,-0.53,-0.24,-0.85,1.16,-0.03,-0.59,1.46,0.72,-0.26],"h":2.609},{"f":"faces/043.webp","id":"male/0103","x":[1.195,0.634,-1.34,-0.449,-1.975,0.494,0.322,0.482,-0.539,1.887],"t":[-0.25,0.59,2.73,1.59,-1.52,1.21,1.76,0.15,0.91,-2.29],"h":2.766},{"f":"faces/044.webp","id":"male/0031","x":[-0.064,0.114,-1.088,-0.044,-1.353,-1.241,-0.756,-0.075,1.233,-0.462],"t":[0.42,1.03,0.47,1.64,0.12,0.35,0.77,0.61,-0.8,0.46],"h":3.345},{"f":"faces/045.webp","id":"male/0053","x":[-0.314,1.221,-0.848,-0.013,-0.551,2.105,-0.937,0.568,0.262,-0.398],"t":[-1.7,0.91,-0.4,-1.38,-1.3,1.47,-0.22,-0.87,-0.27,-0.98],"h":3.348},{"f":"faces/046.webp","id":"male/0176","x":[-0.493,-0.22,-0.5,-0.233,0.016,1.015,0.595,-1.691,-0.305,0.676],"t":[0.43,1.11,0.28,0.07,-0.32,0.29,1.11,-0.07,-0.02,-0.22],"h":3.589},{"f":"faces/047.webp","id":"male/0052","x":[0.823,-0.304,0.387,-0.124,-1.13,-1.617,1.089,-1.088,1.368,0.057],"t":[0.97,-0.02,-0.04,-0.02,0.18,-0.55,-0.82,0.83,0.66,0.27],"h":3.284},{"f":"faces/048.webp","id":"male/0074","x":[-1.454,0.316,-1.007,0.474,2.092,-0.929,-0.428,-0.238,1.144,-0.54],"t":[-0.3,-0.67,-0.5,0.39,1.01,1.0,-2.16,0.42,-0.5,1.36],"h":3.598},{"f":"faces/049.webp","id":"male/0137","x":[0.35,-0.324,-0.711,0.386,-0.036,0.487,1.272,-2.099,-0.381,0.573],"t":[0.84,0.07,-0.26,-1.36,0.16,-0.55,0.84,0.95,0.67,-0.47],"h":2.962},{"f":"faces/050.webp","id":"male/0172","x":[0.065,1.331,0.312,1.465,0.64,0.102,0.544,0.558,0.972,-1.454],"t":[-0.87,-1.67,-1.16,-1.39,-1.1,-0.7,-0.68,-0.79,-0.55,-0.63],"h":3.017},{"f":"faces/051.webp","id":"male/0182","x":[1.19,0.061,1.165,-0.235,0.392,1.026,0.166,-0.572,-0.884,0.359],"t":[1.06,-0.67,-0.01,-1.3,-0.05,-1.7,-0.79,0.55,1.04,-0.8],"h":3.016},{"f":"faces/052.webp","id":"male/0047","x":[0.388,0.547,-0.392,-1.16,0.913,1.258,0.16,-0.115,0.011,1.025],"t":[0.86,-0.49,-1.06,-0.58,0.54,0.32,0.86,1.03,-0.25,-0.87],"h":3.034},{"f":"faces/053.webp","id":"male/0106","x":[-0.083,2.188,0.422,-1.567,0.144,-0.691,-0.607,-0.668,1.525,1.406],"t":[0.85,-0.18,-1.55,-1.8,-0.55,0.1,1.87,0.45,-1.02,-0.91],"h":3.217},{"f":"faces/054.webp","id":"male/0066","x":[-0.557,-0.189,0.225,0.414,0.441,2.063,0.469,-0.083,0.331,0.523],"t":[-1.87,0.17,-0.82,-0.22,-1.23,0.69,-1.24,-1.08,0.19,-0.2],"h":3.155},{"f":"faces/055.webp","id":"male/0117","x":[0.977,-0.356,0.028,1.181,1.982,0.211,-0.218,-0.997,0.093,0.272],"t":[-0.06,-1.77,-1.76,-1.01,0.79,0.32,-1.36,0.95,1.37,-0.49],"h":3.086},{"f":"faces/056.webp","id":"male/0044","x":[1.544,-0.462,-0.848,0.941,0.385,-0.933,-0.278,-0.132,1.006,0.1],"t":[0.88,-1.56,-0.18,-0.04,1.04,-0.66,-0.51,0.8,1.41,-0.56],"h":3.049},{"f":"faces/057.webp","id":"male/0100","x":[-0.182,-1.189,0.986,-1.227,1.414,-1.03,1.569,2.141,0.065,-0.183],"t":[0.17,-0.09,0.97,0.92,0.61,0.36,0.21,-0.32,0.44,0.8],"h":3.55},{"f":"faces/058.webp","id":"male/0123","x":[0.492,0.113,1.247,-0.987,1.109,0.731,-1.245,-0.582,0.801,-0.274],"t":[1.17,-1.42,-2.24,-0.96,0.47,-0.1,-0.62,1.16,0.08,-0.29],"h":3.251},{"f":"faces/059.webp","id":"male/0184","x":[0.819,-0.659,-0.807,0.195,0.495,-0.19,0.423,0.288,-1.02,-1.398],"t":[0.9,-1.41,-0.66,0.29,1.11,-0.44,-0.25,0.64,0.8,-0.03],"h":2.94},{"f":"faces/060.webp","id":"male/0068","x":[0.26,-0.147,1.982,-1.352,-0.242,0.112,0.383,-0.071,0.719,-0.028],"t":[0.38,-0.08,-0.45,-0.42,0.14,0.16,0.1,0.61,0.15,-0.23],"h":3.038},{"f":"faces/061.webp","id":"male/0119","x":[-1.086,-1.023,-0.459,0.114,-2.545,-0.663,-2.509,0.64,0.068,-0.724],"t":[-0.1,2.01,0.13,0.43,-0.29,-1.69,1.05,-1.38,-2.1,1.1],"h":3.472},{"f":"faces/062.webp","id":"male/0034","x":[-1.135,-1.394,0.957,-1.201,0.002,0.732,0.631,-1.227,0.412,0.198],"t":[0.02,1.4,-0.34,0.21,0.66,-1.54,0.03,0.18,-0.5,0.88],"h":3.396},{"f":"faces/063.webp","id":"male/0150","x":[1.197,-0.064,2.247,0.967,0.242,0.133,-1.482,-1.641,-0.69,0.605],"t":[-0.46,-1.65,-1.29,-2.12,-0.72,-1.9,-1.13,0.07,0.61,-0.42],"h":2.988},{"f":"faces/064.webp","id":"male/0131","x":[-0.373,1.017,2.333,0.287,-0.164,-0.653,0.443,0.39,2.778,-0.136],"t":[-0.58,-0.19,-1.6,-1.18,-1.68,-0.96,-0.44,-0.84,-0.79,-0.69],"h":3.358},{"f":"faces/065.webp","id":"male/0006","x":[-2.149,-0.703,0.675,-0.971,0.559,-0.771,-2.146,0.828,-0.416,0.473],"t":[0.14,0.77,-0.71,-0.06,1.22,0.57,0.01,-0.69,-2.47,1.77],"h":3.329},{"f":"faces/066.webp","id":"male/0094","x":[-0.47,3.098,1.002,0.05,-0.93,-0.404,0.614,-2.229,-1.499,0.995],"t":[-0.46,0.17,-0.55,-3.19,-2.88,0.48,1.77,-0.87,-0.97,-2.29],"h":3.053},{"f":"faces/067.webp","id":"male/0054","x":[-0.529,-0.886,1.182,-0.468,-0.559,-0.403,-0.583,0.673,-0.983,-2.314],"t":[-0.04,1.11,0.64,0.02,-0.45,-1.37,0.97,-1.1,-1.13,0.99],"h":3.412},{"f":"faces/068.webp","id":"male/0122","x":[1.045,-0.823,-0.237,1.235,-0.26,0.607,0.012,-0.11,0.694,1.083],"t":[-0.99,-0.29,-0.22,0.33,-0.16,-0.13,-0.96,0.0,1.04,-0.64],"h":3.102},{"f":"faces/069.webp","id":"male/0165","x":[0.594,0.379,0.039,-0.278,-1.851,-0.8,-0.759,0.95,1.269,-0.895],"t":[0.64,0.76,0.66,0.81,-0.32,-0.05,0.82,0.18,-0.3,0.15],"h":2.969},{"f":"faces/070.webp","id":"male/0007","x":[0.824,1.272,-0.264,0.222,0.819,0.887,-0.108,0.249,-0.365,-1.048],"t":[0.81,-0.17,-0.85,-1.81,0.08,2.34,-1.37,0.43,0.25,-1.4],"h":2.761},{"f":"faces/071.webp","id":"male/0021","x":[-1.214,1.646,-0.436,-0.98,-0.611,-0.155,0.014,-2.2,-0.651,-0.109],"t":[0.65,1.14,-0.34,-0.93,0.01,1.21,1.03,0.44,-1.44,0.01],"h":3.192},{"f":"faces/072.webp","id":"male/0185","x":[0.772,0.026,-0.714,-0.179,-0.523,1.193,0.354,1.768,-0.446,-0.778],"t":[-0.22,-0.38,0.96,0.34,-0.84,0.15,-0.21,-0.74,1.25,-1.0],"h":2.832},{"f":"faces/073.webp","id":"male/0144","x":[-0.479,0.314,-0.083,0.741,-0.987,0.549,0.187,-0.628,0.626,-2.189],"t":[-0.29,0.62,-1.07,-0.58,-0.5,-0.41,-0.52,-0.51,-0.62,0.91],"h":3.076},{"f":"faces/074.webp","id":"male/0093","x":[0.58,-0.347,2.714,-0.898,-0.088,-1.128,0.03,-0.297,-2.346,0.28],"t":[1.47,0.23,0.33,-0.96,0.14,-1.61,0.2,0.79,0.83,-0.61],"h":3.324},{"f":"faces/075.webp","id":"male/0013","x":[0.17,-0.777,-0.966,1.588,-1.202,0.793,-2.213,-0.065,-0.434,0.203],"t":[-0.71,0.65,0.32,0.4,0.54,-0.43,0.17,-0.31,0.71,0.09],"h":2.808},{"f":"faces/076.webp","id":"male/0028","x":[0.489,-1.453,-1.307,-1.474,0.123,0.614,-0.816,0.384,-0.269,-0.784],"t":[0.23,0.55,1.97,1.84,0.72,0.36,0.67,0.67,0.65,0.69],"h":3.306},{"f":"faces/077.webp","id":"male/0112","x":[0.952,0.718,-1.992,-0.809,0.177,0.4,-0.367,-0.688,-0.608,0.46],"t":[0.81,-1.0,0.81,0.56,1.07,0.68,1.1,1.67,1.06,-0.91],"h":2.761},{"f":"faces/078.webp","id":"male/0045","x":[-2.03,-1.504,-0.655,-0.106,0.386,-1.315,-0.194,-0.68,-0.381,-0.62],"t":[0.2,0.52,1.01,2.01,0.91,-1.39,1.45,-0.5,-2.04,2.42],"h":3.845},{"f":"faces/079.webp","id":"male/0017","x":[1.458,-0.483,-0.523,0.484,0.565,-0.762,0.186,0.444,0.452,0.025],"t":[0.59,-1.29,0.19,0.99,0.76,0.61,0.07,0.91,1.19,-0.54],"h":2.916},{"f":"faces/080.webp","id":"male/0120","x":[-0.274,-0.102,2.989,-0.983,-0.79,0.795,-1.241,-1.264,0.041,1.828],"t":[-0.1,1.47,-0.26,-0.78,-0.78,-1.81,-0.22,-0.07,-0.62,-0.34],"h":3.551},{"f":"faces/081.webp","id":"male/0159","x":[0.731,0.195,-0.519,0.312,-1.003,1.333,-0.483,0.362,0.527,-0.255],"t":[-0.38,1.17,0.35,0.6,-0.96,-0.08,-0.09,-0.61,-0.3,-0.78],"h":2.826},{"f":"faces/082.webp","id":"male/0038","x":[0.324,0.604,1.567,1.634,-0.789,1.253,0.996,-0.152,-1.324,-0.294],"t":[-0.8,0.08,-1.14,-1.94,-2.2,-1.14,-1.75,-1.17,0.22,-1.97],"h":2.938},{"f":"faces/083.webp","id":"male/0110","x":[0.009,0.423,-1.358,-1.124,1.189,-0.906,0.428,0.959,0.482,0.031],"t":[1.03,-0.44,1.68,1.29,1.17,1.87,-0.65,1.07,-0.12,0.2],"h":3.054},{"f":"faces/084.webp","id":"male/0055","x":[1.802,-1.479,0.169,0.275,-0.099,-0.258,0.746,0.322,-0.842,-0.12],"t":[-0.12,-0.32,0.67,0.72,0.46,0.13,-0.43,0.07,2.76,-0.16],"h":3.015},{"f":"faces/085.webp","id":"male/0139","x":[-0.014,-1.327,-1.167,0.372,-2.36,0.196,1.053,-0.809,-0.781,0.404],"t":[0.71,1.97,2.23,1.32,0.55,-0.55,0.71,0.62,0.77,0.71],"h":2.945},{"f":"faces/086.webp","id":"male/0056","x":[1.229,-0.379,0.489,0.752,1.145,-0.052,-0.909,-1.182,-1.218,0.638],"t":[0.61,-1.67,-0.81,-0.64,0.62,-1.84,-1.31,1.19,1.14,-0.87],"h":2.901},{"f":"faces/087.webp","id":"male/0060","x":[-0.542,-0.653,0.001,1.233,-0.358,-0.51,1.414,0.26,-0.164,-0.695],"t":[-0.43,1.26,1.27,1.35,0.6,-1.0,0.38,-0.49,-0.54,0.85],"h":3.469},{"f":"faces/088.webp","id":"male/0023","x":[-0.049,0.995,-0.234,-0.597,-0.968,0.043,-2.722,-0.372,0.779,-1.658],"t":[0.8,0.93,-0.25,-0.09,-0.05,0.97,-0.48,1.37,-0.29,-0.4],"h":2.835},{"f":"faces/089.webp","id":"male/0061","x":[1.899,-0.199,1.407,0.358,-0.982,-2.933,-0.529,0.393,0.617,0.296],"t":[1.36,-2.17,-0.79,-0.34,0.61,-1.18,-0.57,1.22,1.24,-0.84],"h":2.723},{"f":"faces/090.webp","id":"male/0170","x":[0.346,-0.46,0.901,-0.2,0.445,1.691,0.91,0.866,1.735,0.703],"t":[-1.1,-0.59,-1.15,-0.76,-0.61,-0.31,-1.28,-0.69,0.53,0.12],"h":3.392},{"f":"faces/091.webp","id":"male/0152","x":[-1.081,-0.37,-1.015,1.901,1.168,-1.432,-1.564,0.209,1.396,1.445],"t":[-0.77,-1.06,-0.68,0.79,1.13,-0.12,0.22,-0.04,-1.01,1.5],"h":3.327},{"f":"faces/092.webp","id":"male/0029","x":[0.531,-1.156,-0.365,-0.344,-0.328,-1.973,1.262,0.726,-1.073,-1.367],"t":[1.39,-0.85,0.65,1.4,1.28,-1.12,-0.31,0.69,0.95,0.39],"h":3.304},{"f":"faces/093.webp","id":"male/0177","x":[-0.009,-0.221,0.427,0.988,0.441,0.185,1.693,0.514,-0.462,-0.35],"t":[0.08,-0.91,-0.97,-0.03,0.03,-0.76,0.9,-0.52,-0.31,0.44],"h":3.025},{"f":"faces/094.webp","id":"male/0197","x":[-0.469,-1.051,0.311,-0.699,0.145,1.06,1.296,2.523,0.695,-0.312],"t":[-1.21,0.42,1.13,1.49,-0.35,0.21,-0.99,-1.15,0.85,0.54],"h":3.565},{"f":"faces/095.webp","id":"male/0027","x":[-0.447,0.063,-0.248,0.319,-0.524,1.515,0.997,1.246,1.4,0.567],"t":[-1.77,0.15,0.67,0.21,-2.1,-0.01,0.75,-1.84,-0.49,-0.34],"h":3.32},{"f":"faces/096.webp","id":"male/0069","x":[-0.012,0.347,0.067,-1.275,0.947,0.481,-1.449,-1.323,0.239,-0.737],"t":[0.67,0.44,-1.19,-0.58,0.36,0.69,0.65,0.73,-0.06,0.26],"h":3.055},{"f":"faces/097.webp","id":"male/0014","x":[-2.663,0.034,0.258,1.395,-1.506,0.766,2.706,-0.582,-1.342,-1.125],"t":[-2.27,1.93,-1.43,-0.72,-2.74,-1.05,0.49,-3.37,-1.64,1.04],"h":3.707},{"f":"faces/098.webp","id":"male/0107","x":[1.192,0.131,-1.829,-0.416,-1.079,0.273,0.069,-0.786,-0.448,0.864],"t":[1.34,0.36,0.68,0.74,0.68,0.63,1.5,1.6,0.66,-0.65],"h":2.945},{"f":"faces/099.webp","id":"male/0057","x":[1.255,-0.469,-0.303,1.313,1.524,-0.803,0.124,-1.179,0.658,-0.012],"t":[0.04,-2.14,-0.95,-0.3,0.7,-0.71,-0.58,0.92,1.27,-0.51],"h":3.046}],"traits":[["부드러운 인상","또렷하고 강한 인상"],["동안","성숙한 분위기"],["둥근 얼굴형","갸름한 얼굴형"],["큰 눈","가늘고 긴 눈매"],["웃는 얼굴","차분한 무표정"],["긴 머리","짧은 머리"],["앞머리 있음","이마를 드러낸 스타일"],["따뜻한 분위기","시크한 분위기"],["진한 이목구비","순한 이목구비"],["강아지상","고양이상"]]};
+// Research records go to a Google Form (RDA 0008); empty FORM = nothing is sent.
+const FORM = { url: 'https://docs.google.com/forms/d/e/1FAIpQLSe3AhAlImp9J0jrRcVSZn2GnR908j9r2FIcGItC3PBcz3WgIQ/formResponse', name: 'entry.17598513', record: 'entry.542049870' };
+let SESSION;                                                   // one id per game, so the 30- and 50-pick records link up
+const ROUNDS = 30, MORE = 20, BETA = 1.5, SIGMA = 0.5, HARD = 0.35, CHECK_GAP = 1.5, CHECK_EVERY = 5;
+// A trait is shown when its estimate is LEAN_Z standard errors from the average, "sure" at SURE_Z. Both are
+// strict because 10 traits are tested at once, so one of them usually looks different by luck.
+const LEAN_Z = 2.3, SURE_Z = 2.8;
+const F = D.faces, M = F.length, NT = D.traits.length;
+const $ = id => document.getElementById(id);
+const sig = z => 1 / (1 + Math.exp(-z));
+const hs = F.map(f => f.h ?? 0), hMean = hs.reduce((a, b) => a + b, 0) / M;
+const hSd = Math.sqrt(hs.reduce((a, b) => a + (b - hMean) ** 2, 0) / M) || 1;
+const HZ = hs.map(h => (h - hMean) / hSd);                      // shared taste, standardised
+const G = F.map(f => f.t.slice());                             // personal features: the named traits (fewer = faster to learn)
+const P = G[0].length;
+let picks, shown, round, limit, pair, history, post, busy = false;
+let log, shownAt = 0;                                         // every answered pair, for research records (RDA 0008)
+
+const dot = (a, b) => { let s = 0; for (let k = 0; k < a.length; k++) s += a[k] * b[k]; return s; };
+const diff = (a, b) => G[a].map((v, k) => v - G[b][k]);
+
+function invert(A) {                                           // Gauss-Jordan; A is P x P symmetric positive definite
+  const n = A.length, B = A.map((r, i) => r.concat(Array.from({ length: n }, (_, j) => +(i === j))));
+  for (let c = 0; c < n; c++) {
+    let p = c; for (let r = c + 1; r < n; r++) if (Math.abs(B[r][c]) > Math.abs(B[p][c])) p = r;
+    [B[c], B[p]] = [B[p], B[c]]; const d = B[c][c];
+    for (let j = 0; j < 2 * n; j++) B[c][j] /= d;
+    for (let r = 0; r < n; r++) if (r !== c && B[r][c]) { const f = B[r][c]; for (let j = 0; j < 2 * n; j++) B[r][j] -= f * B[c][j]; }
+  }
+  return B.map(r => r.slice(n));
+}
+
+function fit() {                                               // posterior over v given all picks: mode m, covariance S
+  let v = new Array(P).fill(0), S;
+  for (let it = 0; it < 12; it++) {
+    const g = v.map(x => x / SIGMA ** 2), H = Array.from({ length: P }, (_, i) => Array.from({ length: P }, (_, j) => +(i === j) / SIGMA ** 2));
+    for (const [w, l] of picks) {
+      const d = diff(w, l), p = sig(BETA * (HZ[w] - HZ[l]) + dot(d, v));
+      for (let i = 0; i < P; i++) { g[i] -= (1 - p) * d[i]; for (let j = 0; j < P; j++) H[i][j] += p * (1 - p) * d[i] * d[j]; }
+    }
+    S = invert(H);
+    const step = S.map(r => dot(r, g)); v = v.map((x, i) => x - step[i]);
+    if (Math.max(...step.map(Math.abs)) < 1e-4) break;
+  }
+  return { m: v, S };
+}
+
+function choosePair() {
+  const pool = []; for (let i = 0; i < M; i++) if (shown[i] < 3) pool.push(i);
+  const check = round % CHECK_EVERY === 2;                     // every 5th pair: a clear gap in shared taste
+  let best = null, bs = -1;
+  for (let c = 0; c < 4000 && (c < 400 || !best); c++) {
+    const a = pool[Math.floor(Math.random() * pool.length)], b = pool[Math.floor(Math.random() * pool.length)];
+    if (a === b) continue;
+    const gap = Math.abs(HZ[a] - HZ[b]);
+    if (check ? gap < CHECK_GAP : gap > HARD) continue;
+    const d = diff(a, b), varD = dot(d, post.S.map(r => dot(r, d))), p = sig(BETA * (HZ[a] - HZ[b]) + dot(d, post.m));
+    const s = check ? Math.random() : varD * p * (1 - p) / (1 + 0.3 * (shown[a] + shown[b]));
+    if (s > bs) { bs = s; best = Math.random() < 0.5 ? [a, b] : [b, a]; }
+  }
+  return { faces: best || [pool[0], pool[1]], check };
+}
+
+function reset() { picks = []; log = []; shown = new Uint8Array(M); round = 0; limit = ROUNDS; history = []; post = fit(); }
+
+function show() {
+  $('Li').src = F[pair.faces[0]].f; $('Ri').src = F[pair.faces[1]].f;
+  $('count').textContent = `${round + 1} / ${limit}`;
+  $('fill').style.width = `${(round / limit) * 100}%`;
+  $('undo').disabled = history.length === 0;
+  $('L').classList.remove('picked'); $('R').classList.remove('picked'); $('pair').classList.remove('fading');
+  shownAt = performance.now();
+}
+
+function next() { if (round >= limit) return finish(); pair = choosePair(); shown[pair.faces[0]]++; shown[pair.faces[1]]++; show(); }
+
+function answer(side) {
+  if (busy) return; busy = true;
+  history.push({ picks: picks.slice(), log: log.slice(), shown: shown.slice(), round, pair, post });
+  const [a, b] = pair.faces;
+  log.push({ left: F[a].id, right: F[b].id, pick: side === null ? null : F[pair.faces[side]].id, check: pair.check, ms: Math.round(performance.now() - shownAt) });
+  if (side !== null) {
+    const w = pair.faces[side], l = pair.faces[1 - side];
+    picks.push([w, l, pair.check]); post = fit();
+    $(side ? 'R' : 'L').classList.add('picked');
+  }
+  $('pair').classList.add('fading');
+  setTimeout(() => { round++; next(); busy = false; }, 220);
+}
+
+function undo() {
+  const h = history.pop(); if (!h || busy) return;
+  ({ picks, log, shown, round, pair, post } = h); show();
+}
+
+function result() {                                            // everything the result screen shows, as data
+  const { m, S } = post;
+  const traits = D.traits.map((t, k) => ({ k, z: m[k] / Math.sqrt(S[k][k]), label: t[m[k] > 0 ? 0 : 1], other: t[m[k] > 0 ? 1 : 0] }))
+    .filter(t => Math.abs(t.z) >= LEAN_Z).sort((a, b) => Math.abs(b.z) - Math.abs(a.z)).slice(0, 3)
+    .map(t => ({ ...t, sure: Math.abs(t.z) >= SURE_Z }));
+  const mine = F.map((_, i) => [dot(G[i], m), i]).filter(([, i]) => Math.abs(HZ[i]) < 0.75).sort((a, b) => b[0] - a[0]).slice(0, 4).map(x => x[1]);
+  const crowd = F.map((_, i) => [HZ[i], i]).sort((a, b) => b[0] - a[0]).slice(0, 4).map(x => x[1]);
+  const checks = picks.filter(p => p[2]), agreed = checks.filter(([w, l]) => HZ[w] > HZ[l]).length;
+  const maxZ = traits.length ? Math.abs(traits[0].z) : 0;
+  return { traits, mine, crowd, checks: checks.length, agreed, maxZ, picks: picks.length };
+}
+
+function finish() {
+  const r = result(); window.lastResult = r;
+  const imgs = (el, idx, alt) => { el.innerHTML = ''; idx.forEach(i => { const im = new Image(); im.src = F[i].f; im.alt = alt; el.append(im); }); };
+  imgs($('top'), r.mine, '나에게 높게 나온 얼굴'); imgs($('crowd'), r.crowd, '모두가 좋아하는 얼굴');
+  $('diffs').innerHTML = '';
+  r.traits.forEach(t => {
+    const li = document.createElement('li'); if (!t.sure) li.className = 'lean';
+    const b = document.createElement('b'); b.textContent = `남들보다 '${t.label}' 쪽을 더 골라요`;
+    const s = document.createElement('span'); s.textContent = t.sure ? '확실한 편' : '아마도';
+    li.append(b, s); $('diffs').append(li);
+  });
+  $('verdict').textContent = r.traits.length === 0
+    ? `아직 남들과 뚜렷하게 다른 점은 안 보여요. 지금까지는 보통 사람들과 비슷하게 골랐어요. 20번 더 하면 작은 차이도 잡을 수 있어요.`
+    : r.traits.some(t => t.sure) ? '반대쪽 스타일과 비슷한 매력의 얼굴이 나란히 나왔을 때, 꾸준히 이쪽을 골랐어요.'
+    : '점선은 아직 확실하지 않은 차이예요. 더 고르면 진짜인지 가려져요.';
+  const level = r.maxZ < 1.5 ? 1 : r.maxZ < LEAN_Z ? 2 : r.maxZ < SURE_Z ? 3 : r.maxZ < 3.5 ? 4 : 5;
+  [...$('meter').children].forEach((el, k) => el.classList.toggle('on', k < level));
+  $('agree').textContent = r.checks ? `확인 질문 ${r.checks}번 중 ${r.agreed}번은 모두가 더 매력적이라고 보는 얼굴을 골랐어요.` : '';
+  const d = new Date(); $('date').textContent = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  $('fill').style.width = '100%';
+  $('game').hidden = true; $('result').hidden = false; window.scrollTo(0, 0);
+  send();
+}
+
+function start() {
+  if (FORM.url && !$('name').value.trim()) { $('name').focus(); $('name').placeholder = '이름을 먼저 적어 주세요'; return; }
+  SESSION = Math.random().toString(36).slice(2, 10); $('copied').textContent = '';
+  reset(); F.forEach(f => { const im = new Image(); im.src = f.f; });
+  $('start').hidden = true; $('result').hidden = true; $('game').hidden = false; next();
+}
+
+function more() { limit += MORE; $('result').hidden = true; $('game').hidden = false; next(); }
+
+[0, 1, 2, 3].forEach(k => { const im = new Image(); im.src = F[Math.floor(k * M / 4 + 3)].f; im.alt = '예시 얼굴'; $('preview').append(im); });
+const record = () => JSON.stringify({ game: 'route-b', gender: D.gender, session: SESSION, date: new Date().toISOString(), picks: log });
+function send() {                                              // fire-and-forget; the form cannot answer a cross-site request
+  if (!FORM.url) return;
+  const body = new URLSearchParams({ [FORM.name]: $('name').value.trim(), [FORM.record]: record() });
+  fetch(FORM.url, { method: 'POST', mode: 'no-cors', body }).then(() => { $('copied').textContent = `기록 ${log.length}개가 연구팀에 저장됐어요. 고마워요!`; },
+    () => { $('copied').textContent = '자동 저장이 안 됐어요. 아래 버튼으로 복사해서 보내 주세요.'; });
+}
+function copyRecord() {
+  const rec = record();
+  const box = $('record'); box.value = rec; box.hidden = false; box.select();
+  const done = () => { $('copied').textContent = `${log.length}개 기록을 복사했어요. 그대로 보내 주세요.`; };
+  if (navigator.clipboard) navigator.clipboard.writeText(rec).then(done, () => { $('copied').textContent = '자동 복사가 막혀 있어요. 위 칸을 전체 선택해 복사해 주세요.'; });
+  else $('copied').textContent = '위 칸을 전체 선택해 복사해 주세요.';
+}
+$('copy').onclick = copyRecord;
+$('name').addEventListener('keydown', e => { if (e.key === 'Enter') start(); });
+$('go').onclick = start; $('again').onclick = start; $('more').onclick = more;
+$('L').onclick = () => answer(0); $('R').onclick = () => answer(1);
+$('skip').onclick = () => answer(null); $('undo').onclick = undo;
+document.addEventListener('keydown', e => {
+  if ($('game').hidden) return;
+  if (e.key === 'ArrowLeft') answer(0); else if (e.key === 'ArrowRight') answer(1);
+  else if (e.key === 'Backspace') undo();
+});
+</script>
