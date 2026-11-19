@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>내 이상형 얼굴</title>
+<style>
+:root { --bg:#faf7f2; --ink:#1d1a16; --muted:#6b645b; --accent:#c2410c; --card:#fff; --line:#e7e0d6 }
+@media (prefers-color-scheme: dark) { :root { --bg:#16130f; --ink:#f2ede6; --muted:#a59d92; --accent:#fb923c; --card:#211d18; --line:#3a332b } }
+* { box-sizing:border-box } [hidden] { display:none !important }
+body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif }
+main { max-width:760px; margin:0 auto; padding:32px 16px; display:grid; gap:18px }
+h1 { font-size:26px; margin:0 } p { margin:0; color:var(--muted) }
+.faces { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px }
+@media (max-width:560px) { .faces { grid-template-columns:1fr } }
+.faces button { padding:0; border:2px solid var(--line); border-radius:14px; overflow:hidden; background:var(--card); cursor:pointer; display:grid }
+.faces button:hover { border-color:var(--accent) } .faces img { width:100%; aspect-ratio:1; display:block; object-fit:cover }
+.faces span { padding:8px; font-weight:700 }
+.none { font:inherit; font-weight:700; padding:14px; border-radius:12px; border:1px solid var(--accent); background:var(--card); color:var(--accent); cursor:pointer }
+</style></head>
+<body><main>
+<section id="ask" style="display:grid;gap:18px">
+  <h1>내 이상형에 가장 가까운 얼굴은?</h1>
+  <p>게임에서 고른 기록으로 만든 얼굴이 섞여 있어요. 가장 내 이상형에 가까운 한 명을 골라 주세요. 한 번만 고를 수 있어요.</p>
+  <div class="faces" id="faces"></div>
+  <button class="none" id="none">셋 다 아니에요</button>
+</section>
+<section id="done" hidden><h1>고마워요!</h1><p id="msg">선택이 연구팀에 저장됐어요.</p></section>
+<section id="bad" hidden><h1>링크가 맞지 않아요</h1><p>받은 링크를 그대로 열어 주세요.</p></section>
+</main>
+<script>
+const SETS = {"7f53cc": ["150a88ed", "730a24bb", "f426df09"], "638cc7": ["749a1891", "93786314", "a3871101"], "70640d": ["79296955", "a1150249", "f426df09"], "fe1ce7": ["967e383b", "db912718", "f426df09"]};
+const FORM = { url: 'https://docs.google.com/forms/d/e/1FAIpQLSe3AhAlImp9J0jrRcVSZn2GnR908j9r2FIcGItC3PBcz3WgIQ/formResponse', name: 'entry.17598513', record: 'entry.542049870' };
+const $ = id => document.getElementById(id);
+const code = new URLSearchParams(location.search).get('k');
+const set = SETS[code];
+if (!set) { $('ask').hidden = true; $('bad').hidden = false; }
+else {
+  const order = set.slice(); for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+  order.forEach((f, k) => { const b = document.createElement('button'); const im = new Image(); im.src = 'img/' + f + '.webp'; im.alt = (k + 1) + '번 얼굴';
+    const s = document.createElement('span'); s.textContent = (k + 1) + '번'; b.append(im, s); b.onclick = () => choose(f); $('faces').append(b); });
+  $('none').onclick = () => choose(null);
+  let sent = false;
+  function choose(f) {
+    if (sent) return; sent = true;
+    const rec = JSON.stringify({ game: 'portrait-test', rda: '0009', code, order, choice: f, date: new Date().toISOString() });
+    fetch(FORM.url, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ [FORM.name]: code, [FORM.record]: rec }) })
+      .catch(() => { $('msg').textContent = '저장이 안 됐어요. 이 화면을 캡처해서 보내 주세요: ' + (f || 'none'); });
+    $('ask').hidden = true; $('done').hidden = false;
+  }
+}
+</script>
+</main></body></html>
